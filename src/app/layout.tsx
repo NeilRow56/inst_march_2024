@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
 import { ThemeProvider } from '@/providers/ThemeProvider'
+import { Toaster } from 'sonner'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -25,6 +26,17 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           {children}
+          <Toaster
+            toastOptions={{
+              unstyled: true,
+              classNames: {
+                error: 'bg-red-400',
+                success: 'text-green-400',
+                warning: 'text-yellow-400',
+                info: 'bg-blue-400',
+              },
+            }}
+          />
         </ThemeProvider>
       </body>
     </html>
