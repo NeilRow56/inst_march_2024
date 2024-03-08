@@ -17,7 +17,7 @@ export const Header = ({ label }: HeaderProps) => {
       <h1 className={cn('text-3xl font-semibold', font.className)}>
         🔐 <Logo />
       </h1>
-      <p className="mb-9 text-sm text-primary">{label}</p>
+      <p className="mb-9 text-sm font-semibold text-primary">{label}</p>
     </div>
   )
 }

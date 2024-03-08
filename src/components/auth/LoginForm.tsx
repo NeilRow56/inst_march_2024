@@ -16,6 +16,7 @@ import {
 import { Button } from '../ui/button'
 import { CardWrapper } from './CardWrapper'
 import { LoginSchema } from '@/schemas/auth'
+import { PasswordInput } from './PasswordInput'
 
 export const LoginForm = () => {
   const form = useForm<z.infer<typeof LoginSchema>>({
@@ -33,7 +34,7 @@ export const LoginForm = () => {
     <CardWrapper
       headerLabel="Welcome back"
       backButtonLabel="Don't have an account?"
-      backButtonHref="/auth/register"
+      backButtonHref="/auth/sign-up"
     >
       <Form {...form}>
         <form className="space-y-6" onSubmit={form.handleSubmit(onSubmit)}>
@@ -62,7 +63,7 @@ export const LoginForm = () => {
                 <FormItem>
                   <FormLabel className="flex w-full">Password</FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder="******" type="password" />
+                    <PasswordInput {...field} placeholder="Password" />
                   </FormControl>
 
                   <FormMessage />
