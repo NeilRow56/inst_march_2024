@@ -2,6 +2,7 @@ import { Divide } from 'lucide-react'
 import { Button } from '../ui/button'
 import Link from 'next/link'
 import { ThemeToggle } from './ThemeToggle'
+import NavbarSigninButton from './NavbarSignInButton'
 
 function DashboardNavbar() {
   // Holding userId ready for auth
@@ -26,12 +27,10 @@ function DashboardNavbar() {
       <div className=" flex  gap-6">
         <ThemeToggle />
         {userId ? (
-          <Button asChild size="sm" className="px-6  ">
-            <Link href="/sign-in">User</Link>
-          </Button>
+          <NavbarSigninButton />
         ) : (
           <Button asChild size="sm" className="px-6  ">
-            <Link href="/sign-in">Login</Link>
+            <Link href="/auth/sign-in">Login</Link>
           </Button>
         )}
       </div>
