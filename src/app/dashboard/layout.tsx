@@ -3,6 +3,8 @@ import DashboardNavbar from '@/components/dashboard-layout/DashboardNavbar'
 import Sidebar from '@/components/dashboard-layout/Sidebar'
 import React, { ReactNode } from 'react'
 
+export const dynamic = 'force-dynamic'
+
 function DashboardLayout({ children }: { children: ReactNode }) {
   return (
     <div className="relative flex h-screen flex-col   md:flex-row md:overflow-hidden">

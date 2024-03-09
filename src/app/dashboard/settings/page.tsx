@@ -17,8 +17,60 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { db } from '@/lib/db'
+import { authOptions } from '@/lib/auth'
+import { getServerSession } from 'next-auth'
+import { revalidatePath } from 'next/cache'
+import { SubmitButton } from '@/components/dashboard-layout/SubmitButtons'
+
+//To enable form to change on each request
+export const revalidate = 0
+
+export const dynamic = 'force-dynamic'
+
+async function getData(userId: string) {
+  const data = await db.user.findUnique({
+    where: {
+      id: userId,
+    },
+    select: {
+      firstName: true,
+      lastName: true,
+      email: true,
+      colorScheme: true,
+    },
+  })
+
+  return data
+}
 
 const SettingsPage = async () => {
+  const session = await getServerSession(authOptions)
+
+  const user = session?.user
+  const data = await getData(user?.id as string)
+
+  async function postData(formData: FormData) {
+    'use server'
+
+    const name = formData.get('name') as string
+    const lastName = formData.get('lastName') as string
+    const colorScheme = formData.get('color') as string
+
+    await db.user.update({
+      where: {
+        id: user?.id,
+      },
+      data: {
+        firstName: name ?? undefined,
+        lastName: lastName ?? undefined,
+        colorScheme: colorScheme ?? undefined,
+      },
+    })
+
+    revalidatePath('/', 'layout')
+  }
+
   return (
     <div className="grid items-start gap-8">
       <div className="flex items-center justify-between px-2">
@@ -28,7 +80,7 @@ const SettingsPage = async () => {
         </div>
       </div>
       <Card>
-        <form>
+        <form action={postData}>
           <CardHeader>
             <CardTitle>General Data</CardTitle>
             <CardDescription>
@@ -47,9 +99,22 @@ const SettingsPage = async () => {
                   type="text"
                   id="name"
                   placeholder="Your Name"
-                  defaultValue=""
+                  defaultValue={data?.firstName ?? undefined}
                 />
               </div>
+              <div className="space-y-1">
+                <Label htmlFor="lastName" className="text-primary/80">
+                  Last Name
+                </Label>
+                <Input
+                  name="lastName"
+                  type="text"
+                  id="lastName"
+                  placeholder="Your Last Name"
+                  defaultValue={data?.lastName ?? undefined}
+                />
+              </div>
+
               <div className="space-y-1">
                 <Label className="text-lg font-semibold text-primary">
                   Your Email
@@ -60,7 +125,7 @@ const SettingsPage = async () => {
                   id="email"
                   placeholder="Your Email"
                   disabled
-                  defaultValue=""
+                  defaultValue={data?.email ?? undefined}
                 />
               </div>
 
@@ -68,7 +133,7 @@ const SettingsPage = async () => {
                 <Label className="text-lg font-semibold text-primary">
                   Color Scheme
                 </Label>
-                <Select name="color" defaultValue="orange">
+                <Select name="color" defaultValue={data?.colorScheme}>
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="Select a color" />
                   </SelectTrigger>
@@ -89,7 +154,9 @@ const SettingsPage = async () => {
             </div>
           </CardContent>
 
-          <CardFooter>Submit Button</CardFooter>
+          <CardFooter>
+            <SubmitButton />
+          </CardFooter>
         </form>
       </Card>
     </div>
