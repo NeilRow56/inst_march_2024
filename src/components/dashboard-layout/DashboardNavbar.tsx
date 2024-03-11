@@ -18,7 +18,7 @@ function DashboardNavbar() {
   else if (hrs >= 17 && hrs <= 24) greet = 'Good Evening'
 
   return (
-    <div className="flex h-14 w-full items-center border border-gray-600  bg-white  px-2 dark:bg-neutral-950 md:px-12  lg:px-48">
+    <div className="mt-6 flex h-14 w-full items-center border border-gray-600 bg-white  px-2  dark:bg-neutral-950 md:mt-0 md:px-12  lg:px-48">
       <div className="justify-cstart flex flex-1">
         <div>
           <p className="text-xl text-primary">{greet}</p>

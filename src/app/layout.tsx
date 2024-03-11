@@ -8,6 +8,7 @@ import { AuthProvider } from '@/providers/AuthProvider'
 import { authOptions } from '@/lib/auth'
 import { getServerSession } from 'next-auth'
 import { db } from '@/lib/db'
+import { EdgeStoreProvider } from '@/lib/edgestore'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -52,18 +53,20 @@ export default async function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            {children}
-            <Toaster
-              toastOptions={{
-                unstyled: true,
-                classNames: {
-                  error: 'bg-red-400',
-                  success: 'text-green-400',
-                  warning: 'text-yellow-400',
-                  info: 'bg-blue-400',
-                },
-              }}
-            />
+            <EdgeStoreProvider>
+              {children}
+              <Toaster
+                toastOptions={{
+                  unstyled: true,
+                  classNames: {
+                    error: 'bg-red-400',
+                    success: 'text-green-400',
+                    warning: 'text-yellow-400',
+                    info: 'bg-blue-400',
+                  },
+                }}
+              />
+            </EdgeStoreProvider>
           </ThemeProvider>
         </body>
       </html>
