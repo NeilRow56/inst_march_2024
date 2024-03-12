@@ -22,7 +22,7 @@ import { Input } from '@/components/ui/input'
 import { zodResolver } from '@hookform/resolvers/zod'
 import Image from 'next/image'
 import { usePathname, useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useTransition, useEffect, useState } from 'react'
 import { useForm, useFormContext } from 'react-hook-form'
 import { z } from 'zod'
 import { SingleImageDropzone } from '@/components/forms/SingleImageDropzone'
@@ -31,6 +31,8 @@ import { toast } from 'sonner'
 import { Loader2, XCircle } from 'lucide-react'
 import { CreatePostSchema, CreatePostValues } from '@/schemas/posts'
 import useMount from '@/hooks/useMount'
+import Error from '@/components/Error'
+import { createPost } from '@/actions/post-actions'
 
 function CreatePage() {
   const pathname = usePathname()
@@ -41,7 +43,7 @@ function CreatePage() {
   const [imageIsDeleting, setImageIsDeleting] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const { edgestore } = useEdgeStore()
-
+  const [isPending, startTransition] = useTransition()
   const router = useRouter()
   const mount = useMount()
 
@@ -87,11 +89,30 @@ function CreatePage() {
 
   if (!mount) return null
 
-  async function onSubmit(values: CreatePostValues) {
-    alert(JSON.stringify(values, null, 2))
-    console.log(values)
-  }
+  // async function onSubmit(values: CreatePostValues) {
+  //   alert(JSON.stringify(values, null, 2))
+  //   console.log(values)
+  // }
 
+  const onSubmit = (values: z.infer<typeof CreatePostSchema>) => {
+    startTransition(() => {
+      createPost(values)
+        .then((data) => {
+          if (data?.errors) {
+            form.reset()
+            return toast.error('Something went wrong')
+          }
+
+          if (data?.success) {
+            form.reset()
+            toast.success(data.success)
+            router.push('/dashboard')
+            router.refresh()
+          }
+        })
+        .catch(() => toast.error('Something went wrong'))
+    })
+  }
   return (
     <div>
       <Dialog
