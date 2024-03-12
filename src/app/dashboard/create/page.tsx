@@ -81,7 +81,7 @@ function CreatePage() {
     })
 
     setFileUrl('')
-    // toast.success(data.success)
+    toast.success('Image deleted')
     setImageIsDeleting(false)
   }
 
@@ -173,7 +173,7 @@ function CreatePage() {
                                           // to add the necessary data to your database
                                           // console.log(res)
                                           setFileUrl(res?.url)
-                                          // toast.success(data.success)
+                                          toast.success('Upload Comp[lete')
                                         }
                                       }}
                                     >
