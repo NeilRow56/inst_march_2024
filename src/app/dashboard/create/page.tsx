@@ -217,7 +217,7 @@ function CreatePage() {
                   )}
                 />
               )}
-              <Button type="submit" disabled={form.formState.isSubmitting}>
+              <Button type="submit" disabled={isPending}>
                 Create Post
               </Button>
             </form>

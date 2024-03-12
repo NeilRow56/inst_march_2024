@@ -2,9 +2,8 @@
 
 import { db } from '@/lib/db'
 import { getUserId } from '@/lib/utils'
-import { CreatePostSchema } from '@/schemas/posts'
+import { CreatePostSchema, DeletePostSchema } from '@/schemas/posts'
 import { revalidatePath } from 'next/cache'
-import { redirect } from 'next/navigation'
 import * as z from 'zod'
 
 export const createPost = async (values: z.infer<typeof CreatePostSchema>) => {
@@ -34,4 +33,35 @@ export const createPost = async (values: z.infer<typeof CreatePostSchema>) => {
   })
 
   return { success: 'Successfully created post' }
+}
+
+export async function deletePost(formData: FormData) {
+  const userId = await getUserId()
+
+  const { id } = DeletePostSchema.parse({
+    id: formData.get('id'),
+  })
+
+  const post = await db.post.findUnique({
+    where: {
+      id,
+      userId,
+    },
+  })
+
+  if (!post) {
+    throw new Error('Post not found')
+  }
+
+  try {
+    await db.post.delete({
+      where: {
+        id,
+      },
+    })
+    revalidatePath('/dashboard')
+    return { message: 'Deleted Post.' }
+  } catch (error) {
+    return { message: 'Database Error: Failed to Delete Post.' }
+  }
 }
