@@ -1,7 +1,5 @@
 'use client'
 
-import { AspectRatio } from '@/components/ui/aspect-ratio'
-import { Post } from '@prisma/client'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -23,7 +21,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import Image from 'next/image'
 import { usePathname, useRouter } from 'next/navigation'
 import { useTransition, useEffect, useState } from 'react'
-import { useForm, useFormContext } from 'react-hook-form'
+import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { SingleImageDropzone } from '@/components/forms/SingleImageDropzone'
 import { useEdgeStore } from '@/lib/edgestore'
@@ -31,7 +29,6 @@ import { toast } from 'sonner'
 import { Loader2, XCircle } from 'lucide-react'
 import { CreatePostSchema, CreatePostValues } from '@/schemas/posts'
 import useMount from '@/hooks/useMount'
-import Error from '@/components/Error'
 import { createPost } from '@/actions/post-actions'
 
 function CreatePage() {
@@ -41,7 +38,7 @@ function CreatePage() {
   const [progress, setProgress] = useState(0)
   const [fileUrl, setFileUrl] = useState<string | undefined>()
   const [imageIsDeleting, setImageIsDeleting] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
+
   const { edgestore } = useEdgeStore()
   const [isPending, startTransition] = useTransition()
   const router = useRouter()
@@ -54,16 +51,6 @@ function CreatePage() {
       fileUrl: undefined,
     },
   })
-
-  const {
-    handleSubmit,
-    watch,
-    trigger,
-    control,
-    setValue,
-    setFocus,
-    formState: { isSubmitting },
-  } = form
 
   useEffect(() => {
     if (typeof fileUrl === 'string') {
@@ -88,11 +75,6 @@ function CreatePage() {
   }
 
   if (!mount) return null
-
-  // async function onSubmit(values: CreatePostValues) {
-  //   alert(JSON.stringify(values, null, 2))
-  //   console.log(values)
-  // }
 
   const onSubmit = (values: z.infer<typeof CreatePostSchema>) => {
     startTransition(() => {
@@ -124,7 +106,7 @@ function CreatePage() {
             <DialogTitle>Create new post</DialogTitle>
           </DialogHeader>
           <Form {...form}>
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 ">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 ">
               <FormField
                 control={form.control}
                 name="fileUrl"
@@ -140,7 +122,7 @@ function CreatePage() {
                                 fill
                                 src={fileUrl}
                                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                                alt="Hotel Image"
+                                alt=" Image"
                                 className="object-contain"
                               />
                               <Button
@@ -227,6 +209,7 @@ function CreatePage() {
                           id="caption"
                           placeholder="Write a caption..."
                           {...field}
+                          disabled={isPending}
                         />
                       </FormControl>
                       <FormMessage />
