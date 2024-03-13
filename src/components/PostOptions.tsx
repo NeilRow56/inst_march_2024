@@ -39,7 +39,10 @@ function PostOptions({ post, userId, className }: Props) {
             className="postOption"
           >
             <input type="hidden" name="id" value={post.id} />
-            <TrashDelete />
+            <span className="flex h-12 items-center gap-4">
+              Delete
+              <TrashDelete />
+            </span>
           </form>
         )}
 
