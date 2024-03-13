@@ -17,3 +17,7 @@ export type DeletePostValues = z.infer<typeof DeletePostSchema>
 export const LikeSchema = z.object({
   postId: z.string(),
 })
+
+export const BookmarkSchema = z.object({
+  postId: z.string(),
+})

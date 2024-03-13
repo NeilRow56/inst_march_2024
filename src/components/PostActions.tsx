@@ -5,6 +5,7 @@ import { MessageCircle } from 'lucide-react'
 import Link from 'next/link'
 import LikeButton from './LikeButton'
 import ShareButton from './ShareButton'
+import BookmarkButton from './BookmarkButton'
 
 type Props = {
   post: PostWithExtras
@@ -22,6 +23,7 @@ function PostActions({ post, userId, className }: Props) {
         </ActionIcon>
       </Link>
       <ShareButton postId={post.id} />
+      <BookmarkButton post={post} userId={userId} />
     </div>
   )
 }
