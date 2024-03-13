@@ -4,6 +4,7 @@ import ActionIcon from '@/components/ActionIcon'
 import { MessageCircle } from 'lucide-react'
 import Link from 'next/link'
 import LikeButton from './LikeButton'
+import ShareButton from './ShareButton'
 
 type Props = {
   post: PostWithExtras
@@ -20,6 +21,7 @@ function PostActions({ post, userId, className }: Props) {
           <MessageCircle className={'h-6 w-6'} />
         </ActionIcon>
       </Link>
+      <ShareButton postId={post.id} />
     </div>
   )
 }
