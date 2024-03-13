@@ -2,7 +2,7 @@
 
 import { db } from '@/lib/db'
 import { getUserId } from '@/lib/utils'
-import { CreatePostSchema, DeletePostSchema } from '@/schemas/posts'
+import { CreatePostSchema, DeletePostSchema, LikeSchema } from '@/schemas/posts'
 import { revalidatePath } from 'next/cache'
 import * as z from 'zod'
 
@@ -63,5 +63,69 @@ export async function deletePost(formData: FormData) {
     return { message: 'Deleted Post.' }
   } catch (error) {
     return { message: 'Database Error: Failed to Delete Post.' }
+  }
+}
+
+export async function likePost(value: FormDataEntryValue | null) {
+  const userId = await getUserId()
+
+  const validatedFields = LikeSchema.safeParse({ postId: value })
+
+  if (!validatedFields.success) {
+    return {
+      errors: validatedFields.error.flatten().fieldErrors,
+      message: 'Missing Fields. Failed to Like Post.',
+    }
+  }
+
+  const { postId } = validatedFields.data
+
+  const post = await db.post.findUnique({
+    where: {
+      id: postId,
+    },
+  })
+
+  if (!post) {
+    throw new Error('Post not found')
+  }
+
+  const like = await db.like.findUnique({
+    where: {
+      postId_userId: {
+        postId,
+        userId,
+      },
+    },
+  })
+
+  if (like) {
+    try {
+      await db.like.delete({
+        where: {
+          postId_userId: {
+            postId,
+            userId,
+          },
+        },
+      })
+      revalidatePath('/dashboard')
+      return { message: 'Unliked Post.' }
+    } catch (error) {
+      return { message: 'Database Error: Failed to Unlike Post.' }
+    }
+  }
+
+  try {
+    await db.like.create({
+      data: {
+        postId,
+        userId,
+      },
+    })
+    revalidatePath('/dashboard')
+    return { message: 'Liked Post.' }
+  } catch (error) {
+    return { message: 'Database Error: Failed to Like Post.' }
   }
 }

@@ -13,3 +13,7 @@ export const DeletePostSchema = PostSchema.pick({ id: true })
 export type CreatePostValues = z.infer<typeof CreatePostSchema>
 export type UpdatePostValues = z.infer<typeof UpdatePostSchema>
 export type DeletePostValues = z.infer<typeof DeletePostSchema>
+
+export const LikeSchema = z.object({
+  postId: z.string(),
+})
