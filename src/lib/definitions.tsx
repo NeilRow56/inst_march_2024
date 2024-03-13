@@ -9,3 +9,8 @@ export type PostWithExtras = Post & {
   savedBy: SavedPost[]
   user: User
 }
+
+export type UserWithExtras = User & {
+  posts: Post[]
+  saved: SavedPost[]
+}

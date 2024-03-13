@@ -86,7 +86,7 @@ model Post {
     comments  Comment[]
     followers Follower[]
     user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-    userId String @db.ObjectId
+    userId String @db.ObjectId @map("user_id")
 
     @@index([userId])
 }
@@ -107,7 +107,7 @@ model ActivateToken {
 model Session {
   id           String @id @default(auto()) @map("_id") @db.ObjectId
   sessionToken String   @unique
-  userId       String  @db.ObjectId
+  userId       String  @db.ObjectId @map("user_id")
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
@@ -135,7 +135,7 @@ model SavedPost {
     updatedAt DateTime @updatedAt
     post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
     postId String @db.ObjectId
-    userId String @db.ObjectId
+    userId String @db.ObjectId @map("user_id")
 
     user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -149,7 +149,7 @@ model Like {
     updatedAt DateTime @updatedAt
     post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
     postId String @db.ObjectId
-    userId String @db.ObjectId
+    userId String @db.ObjectId @map("user_id")
 
     user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -164,12 +164,13 @@ model Comment {
     body      String
     post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
     postId String @db.ObjectId
-    userId String @db.ObjectId
+    userId String @db.ObjectId @map("user_id")
 
     user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
     @@index([postId])
-    @@index([userId])
+    @@index([userId])  
+
 }
 
 model Follower {

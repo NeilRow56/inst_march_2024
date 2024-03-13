@@ -10,6 +10,7 @@ import UserAvatar from './UserAvatar'
 import Timestamp from './Timestamp'
 import PostOptions from './PostOptions'
 import PostActions from './PostActions'
+import Comments from './Comments'
 
 async function Post({ post }: { post: PostWithExtras }) {
   const session = await getServerSession(authOptions)
@@ -68,6 +69,8 @@ async function Post({ post }: { post: PostWithExtras }) {
           <p>{post.caption}</p>
         </div>
       )}
+
+      <Comments postId={post.id} comments={post.comments} user={session.user} />
     </div>
   )
 }
