@@ -4,6 +4,7 @@ import { db } from '@/lib/db'
 import { getUserId } from '@/lib/utils'
 import {
   BookmarkSchema,
+  CreateCommentSchema,
   CreatePostSchema,
   DeletePostSchema,
   LikeSchema,
@@ -200,5 +201,43 @@ export async function bookmarkPost(value: FormDataEntryValue | null) {
     return {
       message: 'Database Error: Failed to Bookmark Post.',
     }
+  }
+}
+
+export async function createComment(
+  values: z.infer<typeof CreateCommentSchema>
+) {
+  const userId = await getUserId()
+
+  const validatedFields = CreateCommentSchema.safeParse(values)
+
+  if (!validatedFields.success) {
+    return { error: 'Missing Fields. Failed to Create Comment.' }
+  }
+
+  const { postId, body } = validatedFields.data
+
+  const post = await db.post.findUnique({
+    where: {
+      id: postId,
+    },
+  })
+
+  if (!post) {
+    throw new Error('Post not found')
+  }
+
+  try {
+    await db.comment.create({
+      data: {
+        body,
+        postId,
+        userId,
+      },
+    })
+    revalidatePath('/dashboard')
+    return { success: 'Comment created' }
+  } catch (error) {
+    return { message: 'Database Error: Failed to Create Comment.' }
   }
 }

@@ -24,7 +24,9 @@ export const BookmarkSchema = z.object({
 
 export const CommentSchema = z.object({
   id: z.string(),
-  body: z.string(),
+  body: z.string().min(1, {
+    message: 'Minimum 1 character required',
+  }),
   postId: z.string(),
 })
 
